@@ -37,10 +37,13 @@ public class WordGuess
 
 		String[] words = {"falls", "battle", "kitten", "sassy", "member", "cartoon", "kettle", "towell", "window", "train", "tumble", "remember", "artist", "number", "photo", 
 				"umbrella", "computer", "feather", "justice", "europe", "saxophone", "asteroid", "lumenous", "volume", "vitriol", "bumper", "xylophone", "zebra", "quaint", "quark"};
-
-		Scanner input = new Scanner(System.in);													//initialize scanner for user input
-		Random generator = new Random();														//initialize random number generator
 		
+		//instantiate and initialize scanner for user input
+		Scanner input = new Scanner(System.in);	
+		//instantiate and initialize random number generator										
+		Random generator = new Random();														
+		
+		//output the game instructions to the user
 		System.out.println("==================================");
 		System.out.println("Welcome to my word guessing game! \n==================================");
 		System.out.println("The stars below represent the letters of the word you must guess");
@@ -52,6 +55,7 @@ public class WordGuess
 		System.out.println("---------------------------------------------------------------------------"
 				+ "-------------------------------------------");
 		
+		//while loop to allow user to select whether they want to play the game with a finite or an infinite number of guesses allowed
 		while (valid_selection == false) {
 			
 			System.out.println("if you would like option 1 please press the number 1 key, if you "
@@ -68,34 +72,48 @@ public class WordGuess
 			else
 				System.out.println("You have made an invalid entry, please try again");
 		}
+		//while loop to allow user to continue playing an infinite number of new sessions of the game
 		while (playGame){
 		
 			boolean wordGuessed = false;
 			int missed_guesses = 0;
-			int random_index = generator.nextInt(words.length);									//randomly select index from 'words' array
-			char[] selected_word = words[random_index].toCharArray();							//convert randomly selected string to character array
+
+			//randomly select index from 'words' array
+			int random_index = generator.nextInt(words.length);	
+			//convert randomly selected string to character array
+					
+			char[] selected_word = words[random_index].toCharArray();
+			//creates a maximum number of guesses allowed... 
+			//this maximum number is directly proportional to the length of the word to be guessed 							
 			int guesses_remaining = selected_word.length *3;
+
+			//outputs the word to be guessed strictly for debugging purposes and is not necessary for the program to function correctly
 			/*
 			System.out.println("------------------testing------------");
 			for (char letter : selected_word)
-				System.out.print(letter);														//outputs the word to be guessed to make testing easier for the programmer
+				System.out.print(letter);														
 			System.out.println("-------------------------------------");
 
 			*/
 			
-			char[] output_array = new char[selected_word.length];								//creates a new array for purposes of outputting guessing progress
-			char[] copy_array = new char [selected_word.length];								//creates a second array to receive the array returned by the search_for_letter method
+			//creates a new array for purposes of outputting guessing progress
+			char[] output_array = new char[selected_word.length];	
+			//creates a second array to receive the array returned by the search_for_letter method							
+			char[] copy_array = new char [selected_word.length];								
 
+			//fills output array with stars
 			for (int i = 0; i < output_array.length; i++)
 			{
-				output_array[i] = '*';															//fills output array with stars
+				output_array[i] = '*';															
 			}
 			System.out.println();
 
-			for (char character : output_array)													//outputs word to be guessed with letters replaced by stars
+			//outputs word to be guessed with letters replaced by stars
+			for (char character : output_array)													
 				System.out.print(character + " ");
 
-			while ((guess_limit == true && guesses_remaining > 0) || guess_limit == false ){	//allows game to proceed as long as player has finite number of guesses left or if player has selected the unlimited guess option
+			//allows game to proceed as long as player has finite number of guesses left or if player has selected the unlimited guess option
+			while ((guess_limit == true && guesses_remaining > 0) || guess_limit == false ){	
 			
 				while (wordGuessed == false && guesses_remaining > 0){	
 					//main while loop to allows infinite iterations of hangman game
@@ -104,46 +122,60 @@ public class WordGuess
 					if (guess_limit)
 						System.out.println("\nYou have " + guesses_remaining + " guesses left");
 					
-					System.out.println("\nplease type a letter to guess if "					//prompt user to guess a letter
+					//prompt user to guess a letter
+					System.out.println("\nplease type a letter to guess if "					
 						+ "it is contained in this word");	
 					
-					guess = input.next().charAt(0);												//input guessed character
+					//input guessed character and decrement the number of guesses remaining
+					guess = input.next().charAt(0);												
 					guesses_remaining--;
 					
-					copy_array = search_for_letter(selected_word, guess);						//invoke search for letter method to check if the guessed letter is contained in the word
-					fail_tracker = miss_counter(selected_word, guess);							//invokes method to count the number of incorrect guesses 
+					//invoke search for letter method to check if the guessed letter is contained in the word
+					copy_array = search_for_letter(selected_word, guess);	
+					//invoke method to count the number of incorrect guesses 					
+					fail_tracker = miss_counter(selected_word, guess);							
 
+					//increments the number of incorrect guesses
 					if (fail_tracker){
-						missed_guesses++;														//increments the number of incorrect guesses
+						missed_guesses++;														
 					}
 
+					//if returned array contains a letter, place that letter in the same index in the output array
 					for (int i = 0; i < output_array.length; i++){	
-						if (copy_array[i] != '*')												//if returned array contains a letter, place that letter in the same index in the output array
+						if (copy_array[i] != '*')												
 							output_array[i] = copy_array[i];
 						else
 							number_letters_unguessed++;
 						}
 					
+					//outputs array after method call so users can modify their guesses
 					for (int j = 0; j < output_array.length; j++)
-						System.out.print(output_array[j] + " ");								//outputs array after method call so users can modify their guesses
+						System.out.print(output_array[j] + " ");								
 				
-					number_letters_unguessed = count_letters_left(output_array);				//calls method to determine if there are any unguessed letters remaining in output array
-					if (number_letters_unguessed == 0)											//registers that word has been successfully guessed and exits inner while loop 
+					//calls method to determine if there are any unguessed letters remaining in output array
+					number_letters_unguessed = count_letters_left(output_array);	
+					//registers that word has been successfully guessed and exits inner while loop			
+					if (number_letters_unguessed == 0)											 
 						wordGuessed = true;
 				}
 			
 				//if guess limit > 0 output the message below
 				if (guesses_remaining > 0) {
 					System.out.println();
-					System.out.println("\nCongratulations you guessed the word!!! \n");				//tells user word has been correctly guessed
-					System.out.println("\n\n you had " + missed_guesses + " missed guesses \n");	//outputs number of missed guesses
+					//tells user word has been correctly guessed
+					System.out.println("\nCongratulations you guessed the word!!! \n");	
+					
+					//outputs number of missed guesses
+					System.out.println("\n\n you had " + missed_guesses + " missed guesses \n");	
 					playGame = false;																
 
-					System.out.println("would you like to play again?");							//asks user if they want to continue the game and attempt to guess a new word
+					//asks user if they want to continue the game and attempt to guess a new word
+					System.out.println("would you like to play again?");							
 					System.out.println("Please press the 'y' key for yes or the 'n' key for no");	
 					answer = input.next().charAt(0);												
 
-					if (answer == 'y')																//if answer is yes, initiate new iteration of the game with a new unknown word
+					//if answer is yes, initiate new iteration of the game with a new unknown word
+					if (answer == 'y')																
 						playGame = true;
 					else {
 						System.out.println("==================================");
@@ -151,20 +183,23 @@ public class WordGuess
 						input.close();
 					}
 				}		
-			}		
+			}	
+			//output game loss message and output actual word
 			System.out.println("\nI'm sorry, you have run out of guesses, "
-					+ "better luck next time \n");													//output game loss message and output actual word
+					+ "better luck next time \n");													
 			System.out.println("The word was:");
 			for (char letter : selected_word)
 				System.out.print(letter);
 				
 			playGame = false;																
 
-			System.out.println("\n\nWould you like to play again?");								//asks user if they want to continue the game and attempt to guess a new word
+			//asks user if they want to continue the game and attempt to guess a new word
+			System.out.println("\n\nWould you like to play again?");								
 			System.out.println("Please press the 'y' key for yes or any other key for no");	
 			answer = input.next().charAt(0);												
 
-			if (answer == 'y')																		//if answer is yes, initiate new iteration of the game with a new unknown word
+			//if answer is yes, initiate new iteration of the game with a new unknown word
+			if (answer == 'y')																		
 				playGame = true;	
 			else {
 				System.out.println("==================================");
@@ -173,26 +208,34 @@ public class WordGuess
 			}
 		}
 	}
-	public static char[] search_for_letter(char[] list, char letter){								//method to determine if the letter guessed is contained in the unknown word 
+	//method to determine if the letter guessed is contained in the unknown word 
+	public static char[] search_for_letter(char[] list, char letter){								
 		int count = 0;
 		char[] return_array = new char[list.length];							
 
+		//initially fills return array with stars
 		for (int i = 0; i < list.length; i++){
-			return_array[i] = '*';																	//initially fills return array with stars
+			return_array[i] = '*';																	
 		}
 
+		//increment count to record that the the guess was correct and a match was found
 		for (int j = 0; j < list.length; j++){
 			if (list[j] == letter) {			
 				return_array[j] = letter;
-				count++;																			//increment count to record that the the guess was correct and a match was found
+				count++;																			
 			}
 		}
-		if (count == 0) 																			//if count is zero, no match was found
+		//if count is zero, no match was found
+		if (count == 0) 																			
 			System.out.println("the word does not contain the letter you guessed");
-			
-		return return_array;																		//return resulting array with all '*' characters except possibly the correctly guessed letter
+		
+		//return resulting array with all '*' characters except possibly the correctly guessed letter	
+		return return_array;
 	}
-	public static boolean miss_counter(char[] list, char letter){									 //method to 
+
+	//method to track whether a guessed letter was not contained in the word
+	public static boolean miss_counter(char[] list, char letter){	
+								
 		boolean incorrectGuess = true;
 
 		for (char guessedLetter : list) {
@@ -201,6 +244,8 @@ public class WordGuess
 		}
 		return incorrectGuess;
 	}
+
+	//method to count the number of unguessed letters remaining in the word
 	public static int count_letters_left(char[] list) {
 		
 		int num_letters_left = 0;
